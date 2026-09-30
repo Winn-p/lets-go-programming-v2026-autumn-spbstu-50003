@@ -1,7 +1,6 @@
 package main
 
 import (
-	// пакет для ввода и вывода
 	"fmt"
 )
 
