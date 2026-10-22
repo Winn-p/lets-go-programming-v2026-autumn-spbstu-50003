@@ -78,11 +78,13 @@ func main() {
 	var departmentNumber int
 	if _, err := fmt.Scan(&departmentNumber); err != nil {
 		fmt.Printf("error while reading number of departments: %v\n", err)
+
 		return
 	}
 
 	if departmentNumber < MinCount || departmentNumber > MaxCount {
 		fmt.Println("incorrect number of departments")
+
 		return
 	}
 
@@ -90,16 +92,19 @@ func main() {
 		var employeesCount int
 		if _, err := fmt.Scan(&employeesCount); err != nil {
 			fmt.Printf("error while reading number of employees: %v\n", err)
+
 			return
 		}
 
 		if employeesCount < MinCount || employeesCount > MaxCount {
 			fmt.Println("incorrect employees number")
+
 			return
 		}
 
 		if err := processEmployees(employeesCount); err != nil {
 			fmt.Println(err)
+
 			return
 		}
 	}
