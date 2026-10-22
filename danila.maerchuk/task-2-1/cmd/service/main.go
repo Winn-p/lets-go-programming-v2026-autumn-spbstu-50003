@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -10,6 +11,8 @@ const (
 	MinCount       = 1
 	MaxCount       = 1000
 )
+
+var ErrUnknownOperation = errors.New("unknown operation")
 
 type TemperatureManager struct {
 	minTemp int
@@ -23,30 +26,33 @@ func NewTemperatureManager() *TemperatureManager {
 	}
 }
 
-func (tm *TemperatureManager) AddConstraint(operation string, value int) error {
-	if operation == ">=" {
-		if value > tm.minTemp {
-			tm.minTemp = value
+func (manager *TemperatureManager) AddConstraint(operation string, value int) error {
+	switch operation {
+	case ">=":
+		if value > manager.minTemp {
+			manager.minTemp = value
 		}
-	} else if operation == "<=" {
-		if value < tm.maxTemp {
-			tm.maxTemp = value
+	case "<=":
+		if value < manager.maxTemp {
+			manager.maxTemp = value
 		}
-	} else {
-		return fmt.Errorf("unknown operation: %s", operation)
+	default:
+		return fmt.Errorf("%w: %s", ErrUnknownOperation, operation)
 	}
+
 	return nil
 }
 
-func (tm *TemperatureManager) GetOptimalTemperature() int {
-	if tm.minTemp <= tm.maxTemp {
-		return tm.minTemp
+func (manager *TemperatureManager) GetOptimalTemperature() int {
+	if manager.minTemp <= manager.maxTemp {
+		return manager.minTemp
 	}
+
 	return -1
 }
 
 func processEmployees(employeesCount int) error {
-	tm := NewTemperatureManager()
+	manager := NewTemperatureManager()
 
 	for range employeesCount {
 		var (
@@ -58,11 +64,13 @@ func processEmployees(employeesCount int) error {
 			return fmt.Errorf("error while reading employees data: %w", err)
 		}
 
-		if err := tm.AddConstraint(operation, val); err != nil {
-			return fmt.Errorf("error processing constraint - %w", err)
+		if err := manager.AddConstraint(operation, val); err != nil {
+			return fmt.Errorf("error processing constraint: %w", err)
 		}
-		fmt.Println(tm.GetOptimalTemperature())
+
+		fmt.Println(manager.GetOptimalTemperature())
 	}
+
 	return nil
 }
 
